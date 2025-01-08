@@ -1,0 +1,129 @@
+genrate testcases for this class the path of it's java file is /home/rajneesh/raapid-audit-apigateway/audit-apigateway/audit-apigateway-service/src/main/java/com/raapid/service/apigateway/audit/controllers/DosPagRangeController.java
+
+package com.raapid.service.apigateway.audit.controllers;
+
+import com.raapid.service.apigateway.audit.AbstractBaseTest;
+import com.raapid.service.apigateway.audit.constant.PermissionConstants;
+import com.raapid.service.apigateway.audit.dto.request.DosPageRangeRequest;
+import com.raapid.service.apigateway.audit.service.DosPageRangeService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class DosPagRangeControllerTests extends AbstractBaseTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Mock
+    private DosPageRangeService dosPageRangeService;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(new DosPagRangeController(dosPageRangeService)).build();
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_VIEW_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Get Dos Page Range - Success")
+    public void testGetDosPageRangeSuccess() throws Exception {
+        // Mock service response
+        when(dosPageRangeService.getDosPageRange(1L)).thenReturn(new DosPageRangeResponse(1L, "Page 1-5"));
+
+        // Perform GET request
+        mockMvc.perform(get("/dos-page-range/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.range").value("Page 1-5"));
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_MANAGE_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Create Dos Page Range - Success")
+    public void testCreateDosPageRangeSuccess() throws Exception {
+        // Mock request and response
+        DosPageRangeRequest request = new DosPageRangeRequest("Page 1-5");
+        when(dosPageRangeService.createDosPageRange(request)).thenReturn(new DosPageRangeResponse(1L, "Page 1-5"));
+
+        // Perform POST request
+        mockMvc.perform(post("/dos-page-range")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(request)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.range").value("Page 1-5"));
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_MANAGE_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Update Dos Page Range - Success")
+    public void testUpdateDosPageRangeSuccess() throws Exception {
+        // Mock request and response
+        DosPageRangeRequest request = new DosPageRangeRequest("Page 6-10");
+        when(dosPageRangeService.updateDosPageRange(1L, request)).thenReturn(new DosPageRangeResponse(1L, "Page 6-10"));
+
+        // Perform PUT request
+        mockMvc.perform(put("/dos-page-range/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.range").value("Page 6-10"));
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_MANAGE_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Delete Dos Page Range - Success")
+    public void testDeleteDosPageRangeSuccess() throws Exception {
+        // Mock service response
+        when(dosPageRangeService.deleteDosPageRange(1L)).thenReturn(true);
+
+        // Perform DELETE request
+        mockMvc.perform(delete("/dos-page-range/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_VIEW_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Get Dos Page Range - Not Found")
+    public void testGetDosPageRangeNotFound() throws Exception {
+        // Mock service response
+        when(dosPageRangeService.getDosPageRange(999L)).thenThrow(new ResourceNotFoundException("Dos Page Range not found"));
+
+        // Perform GET request
+        mockMvc.perform(get("/dos-page-range/999")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Dos Page Range not found"));
+    }
+
+    // Utility method to convert objects to JSON strings
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

@@ -15,10 +15,10 @@ from chat_history.main import get_similar_chats
 
 if __name__ == "__main__":
 
-    code_directory ="/home/rajneesh/Desktop/Enigma"
+    # code_directory ="/home/rajneesh/Desktop/Enigma"
     # code_directory ="/home/rajneesh/IdeaProjects/SkillShare"
-    # code_directory = "/home/rajneesh/doc"
-    # process_and_ingest_data(code_directory)
+    code_directory = "/home/rajneesh/raapid-audit-apigateway"
+    process_and_ingest_data(code_directory)
 
     
     while True:
@@ -31,14 +31,16 @@ if __name__ == "__main__":
         similar_past_chats = get_similar_chats(query_prompt)
 
         # print(similar_embeddings)
+        for _, _, file_content in similar_embeddings:
+            print(file_content)
         print("\n\n")
-        # print(similar_past_chats)
+        print(similar_past_chats)
         print("\n\n\n")
 
-        print("hi\n")
+        # print("hi\n")
         context = "\n\n".join([f"File: {file_path}\nContent: {file_content}" for _, file_path, file_content in similar_embeddings])
         past_context = "\n\n".join([f"Past prompt: {query}\nResponse: {response}\n Similarity:  {similarity}" for _, query, response, similarity in similar_past_chats])
-        print("hi1\n")
+        # print("hi1\n")
         
         query_prompt = f"{query_prompt}\n\nContext from past conversation:\n{past_context}\n\nContext from the memory:\n{context}"
         response = llm_response(query_prompt)

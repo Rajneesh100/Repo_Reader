@@ -1,0 +1,138 @@
+genrate testcases for this class the path of it's java file is: /home/rajneesh/raapid-audit-apigateway/audit-apigateway/audit-apigateway-service/src/main/java/com/raapid/service/apigateway/audit/controllers/CodeController.java
+
+
+package com.raapid.service.apigateway.audit.controllers;
+
+import com.google.gson.Gson;
+import com.raapid.service.apigateway.audit.AbstractBaseTest;
+import com.raapid.service.apigateway.audit.constant.PermissionConstants;
+import com.raapid.service.apigateway.audit.dto.request.CodeRequest;
+import com.raapid.service.apigateway.audit.dto.response.CodeResponse;
+import com.raapid.service.apigateway.audit.service.CodeService;
+
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class CodeControllerTests extends AbstractBaseTest {
+
+    @Autowired
+    private WebApplicationContext wac;
+
+    private MockMvc mockMvc;
+
+    @Mock
+    private CodeService codeService;
+
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(this.wac).build();
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_VIEW_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Get Code by ID")
+    public void testGetCodeById() throws Exception {
+        // Mock response
+        CodeResponse mockResponse = new CodeResponse();
+        mockResponse.setId(1);
+        mockResponse.setCode("TEST_CODE");
+        mockResponse.setDescription("Test Description");
+
+        when(codeService.getCodeById(1)).thenReturn(mockResponse);
+
+        MvcResult result = this.mockMvc.perform(get("/code/1"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+        assert jsonNode.get("id").asInt() == 1;
+        assert jsonNode.get("code").asText().equals("TEST_CODE");
+        assert jsonNode.get("description").asText().equals("Test Description");
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_MANAGE_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Create Code")
+    public void testCreateCode() throws Exception {
+        // Mock request and response
+        CodeRequest codeRequest = new CodeRequest();
+        codeRequest.setCode("NEW_CODE");
+        codeRequest.setDescription("New Code Description");
+
+        CodeResponse mockResponse = new CodeResponse();
+        mockResponse.setId(2);
+        mockResponse.setCode("NEW_CODE");
+        mockResponse.setDescription("New Code Description");
+
+        when(codeService.createCode(codeRequest)).thenReturn(mockResponse);
+
+        Gson gson = new Gson();
+        MvcResult result = this.mockMvc.perform(post("/code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(codeRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody);
+
+        assert jsonNode.get("id").asInt() == 2;
+        assert jsonNode.get("code").asText().equals("NEW_CODE");
+        assert jsonNode.get("description").asText().equals("New Code Description");
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_VIEW_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Get Code by Invalid ID")
+    public void testGetCodeByInvalidId() throws Exception {
+        when(codeService.getCodeById(999)).thenReturn(null);
+
+        this.mockMvc.perform(get("/code/999"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(authorities = PermissionConstants.RA_AUDIT_CAN_MANAGE_ADMIN_CONFIGURATION_SETTINGS)
+    @DisplayName("Test Create Code with Invalid Data")
+    public void testCreateCodeWithInvalidData() throws Exception {
+        // Mock invalid request
+        CodeRequest codeRequest = new CodeRequest();
+        codeRequest.setCode(""); // Invalid code
+        codeRequest.setDescription("Invalid Code Description");
+
+        Gson gson = new Gson();
+        this.mockMvc.perform(post("/code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(gson.toJson(codeRequest)))
+                .andExpect(status().isBadRequest());
+    }
+}
