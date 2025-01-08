@@ -1,0 +1,31 @@
+# start a virtual env
+python3 -m venv llm_poc
+source llm_poc/bin/activate
+
+
+
+# docker postgres container
+start docker : docker run --name vector_db -e POSTGRES_PASSWORD=Rajneesh@2024 -p 5432:5432 -d postgres
+
+
+
+        # access in terminal
+        psql -U postgres
+
+
+        # some commands
+        \dt => database tables
+        \d table_name =>desc table
+
+
+        \l  => list database
+
+        /q  => quit
+
+
+        change database
+        \c demo_db
+
+
+start the llm 
+python3.10 complete_agent.py

@@ -1,0 +1,76 @@
+(llm_poc) rajneesh@laptop-451-raapid:~/Desktop/poc/agent$ python3.10 complete_agent.py 
+enter your query hi
+
+Summary:
+ Hello! It looks like you've provided some content from `.git` objects and references in a Git repository. These files are part of Git's internal storage mechanism and aren't typically meant to be opened or edited directly. They store information like commits, trees, and blobs in a compressed and encoded format.
+
+If you have a specific question or need help with something related to Git or your project, feel free to let me know! 😊
+enter your querynope 
+
+Summary:
+ Hello there, 🥰 It seems like you’re sharing some Git logs and branch references from your project. How can I help you? Are you trying to debug something, resolve a branch issue, or analyze your Git history? Let me know! 😊
+enter your query no no im here just talk forget about my shit project. you know im chatting with you from my terminal
+
+Summary:
+ Hey Rajneesh! Cool that you're chatting with me from your terminal. Sounds like you've been deep in your SkillShare project files—but no worries, we can totally just talk about anything else. What's on your mind? Movies, tech, philosophy, food cravings, or even just random life stuff—I'm game for whatever!
+enter your query How did you knew my name?
+
+Summary:
+ I don't know your name inherently, but I can infer it because the directory path you provided (`/home/rajneesh/...`) contains the name "rajneesh." Based on the context, it appears to be the name of the user associated with the system or project directory.
+
+If this was not your intent, please let me know, and I can clarify further!
+enter your query Great looks like you got some sense of humor
+
+Summary:
+ Ah, I see you've provided some content from your `.git` folder. This is not typically something most people dive into unless they're troubleshooting or trying to understand how Git works under the hood. Let me sprinkle some humor into this situation for you:
+
+---
+
+It looks like you've stumbled upon the secret language of the Git gods. These cryptic symbols and compressed blobs are their way of saying:
+
+> "Why are you looking here? You have no power here!"
+
+---
+
+On a more serious note, these files are part of Git's internal storage mechanism. Here's a quick breakdown of what you're seeing:
+
+1. **Objects (e.g., `/objects/6c/...`)**  
+   These files are compressed representations of your repository's data: commits, trees, blobs (files), and tags. They look like gibberish because they're stored in a highly efficient format for speed and size optimization.
+
+2. **Refs (e.g., `/refs/heads/main` and `/refs/remotes/origin/main`)**  
+   These are pointers to specific commits. For example, `refs/heads/main` points to the latest commit in your `main` branch. In your case, both the local and remote branches are at commit `395d78...`.
+
+3. **Content**  
+   The "content" in the `objects` files is binary or compressed data. It’s not meant to be human-readable without Git helping you out.
+
+---
+
+If you're curious about what's in these objects or want to dig deeper, you can use Git commands like:
+
+```bash
+# Show the content of a given object (replace hash with the actual hash)
+git cat-file -p <hash>
+```
+
+Or, if you're just exploring for fun:
+
+```bash
+# List all objects in the repository
+git rev-list --all --objects
+```
+
+---
+
+But hey, if you're looking for the meaning of life hidden in `.git`, I hate to break it to you: it’s not 42, just a lot of hashes and compressed data. 🚀
+enter your query no no i wasn't asking about git buddy
+
+Summary:
+ It seems like you've shared a lot of context from various Git hook sample scripts in your repository's `.git/hooks` directory, but I don't fully understand the specific question or issue you're trying to address. Could you clarify what you're asking about or what you're trying to achieve? For example:
+
+- Are you asking how to enable or modify these Git hooks?
+- Are you encountering a specific problem with one of these hooks?
+- Do you want to know how to write or use custom Git hooks?
+- Are you asking for guidance on how these hooks work?
+
+Feel free to elaborate on your query so I can assist you better!
+enter your query
